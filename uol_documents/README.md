@@ -27,7 +27,9 @@
 - [Prospectus, Computer Science 2020](./computer-science-prospectus-2020.pdf)
 - [Student privacy notice](./student_privacy_notice_uol_april_2018_final.pdf)
 - [Student Terms and Conditions 2019-2020](./student_terms_and_conditions.pdf)
-- [Welcome webinar Q&amp;A, September 24, 2019](./welcome_webinar_questions_and_answers_september_24_2019.pdf)
+- Welcome webinars
+  - [Welcome webinar Q&amp;A, September 24, 2019](./welcome_webinar_questions_and_answers_september_24_2019.pdf)
+  - [Welcome webinar Q&amp;A, October 2020](./Welcome-Webinar-Q-and-As-October-2020.pdf)
 
 ## Webpages of interest
 

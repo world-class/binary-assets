@@ -1,5 +1,3 @@
-[Go back to the main page](../README.md)
-
 # University of London Links
 
 - [University of London Links](#university-of-london-links)

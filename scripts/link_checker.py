@@ -23,8 +23,16 @@ HEADERS = {
 EXCLUDED_WEBSITES = [
     "calendar.google.com",
     "challengerocket.com",
+    "http://alexeia.digital",
+    "http://calisir",
+    "http://shen.hong.io",
+    "http://www.doc.gold.ac.uk/blog/",
+    "https://github.com/Xuan-Lim",
+    "https://www.coursera.org/learn/uol-introduction-to-programming-1/",
     "https://www.khanacademy.org/math/precalculus/x9e81a4f98389efdf",
+    "https://www.reddit.com/r/UniversityOfLondonCS/",
     "https://yukaichou.com/gamification-book/",
+    "twitter.com",
 ]
 
 def extract_links(excluded_websites: list) -> list:

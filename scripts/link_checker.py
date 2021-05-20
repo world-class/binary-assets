@@ -6,19 +6,15 @@ https://stackoverflow.com/a/13530258/8787680
 """
 import multiprocessing as mp
 import os
-import subprocess
+import pathlib
+import re
 import time
 
 # Third-party imports
 import requests
 
 FILE_NAME = "dead.txt"  # Will appear if it contains dead links
-HEADERS = {
-    "User-Agent": (
-        "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
-        "(KHTML, like Gecko) Chrome/73.0.3683.75 Safari/537.36"
-    )
-}
+
 
 EXCLUDED_WEBSITES = [
     "calendar.google.com",
@@ -26,8 +22,14 @@ EXCLUDED_WEBSITES = [
     "http://alexeia.digital",
     "http://calisir",
     "http://shen.hong.io",
+    "http://web.stanford.edu/class/archive/cs/cs103/cs103.1182/notes/Guide%20to%20Negating%20Formulas.pdf",
     "http://www.doc.gold.ac.uk/blog/",
+    "http://www.geometer.org/mathcircles/RSA.pdf",
+    "https://cvn.columbia.edu/program/columbia-university-computer-science-masters-degree-masters-science",
     "https://github.com/Xuan-Lim",
+    "https://godaddy.com/domains",
+    "https://www.bsimm.com/",
+    "https://www.coursera.org/learn/london-cs-orientation",
     "https://www.coursera.org/learn/uol-introduction-to-programming-1/",
     "https://www.khanacademy.org/math/precalculus/x9e81a4f98389efdf",
     "https://www.reddit.com/r/UniversityOfLondonCS/",
@@ -35,38 +37,64 @@ EXCLUDED_WEBSITES = [
     "twitter.com",
 ]
 
-def extract_links(excluded_websites: list) -> list:
+EXACT_MATCHES = ["http://", "http://localhost"]
+
+
+def extract_links(excluded_websites: list, exact_matches: list) -> set:
     """Extract links from all .md files recursively from the current
     repository."""
-    cmd = (
-        'cat ../../**/*.md | grep -Eo "(http|https)://[+a-zA'
-        '-Z0-9./?=_~-]*" | sort | uniq > links.txt'
-    )
-    subprocess.run(cmd, shell=True)
+
+    curr_dir = pathlib.Path().absolute()
+    rootdir = curr_dir / "../.."
+    regex_filenames = re.compile(r".*\.md$")
+    regex_link = re.compile(r"https?:[a-zA-Z0-9_.+-/#~?%=():]+")
+
+    all_res = set()
+    for dirpaths, _, filenames in os.walk(rootdir):
+        for filename in filenames:
+            if not regex_filenames.match(filename):
+                continue
+            filepath = f"{dirpaths}/{filename}"
+            # print(filepath)
+            with open(filepath) as fp:
+                content = fp.read()
+            all_res |= set(re.findall(regex_link, content))
     print("Links extracted from repository.")
 
-    sites = []
-    with open("links.txt") as f:
-        content = f.readlines()
-        for line in content:
-            excluded = False
-            for website in excluded_websites:
-                if website in line:
-                    print(f"Excluding: {website}")
-                    excluded = True
-            if not excluded:
-                line = line.strip()
-                sites.append(line)
+    sites = set()
 
-    os.unlink("links.txt")
+    for link in all_res:
+        # Handle a couple of edge cases...
+        if link.count("(") == 0 and link.count(")"):
+            link = link.replace(")", "")
+        elif link.endswith("))"):
+            link = link.strip(")")
+        link = link.strip(".").strip(",")
+        excluded = False
+        for website in excluded_websites:
+            if website in link:
+                excluded = True
+                break
+        for website in exact_matches:
+            if link == website:
+                excluded = True
+                break
+        if not excluded:
+            sites.add(link)
     return sites
+
 
 def download_site(url, q):
     """Request an URL. If it can properly be retrieved, add it to queue
     `q` so that it gets written to a file with the job manager."""
-    global HEADERS
+    user_agent = {
+        "User-Agent": (
+            "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 "
+            "(KHTML, like Gecko) Chrome/73.0.3683.75 Safari/537.36"
+        )
+    }
     try:
-        with requests.get(url, headers=HEADERS) as response:
+        with requests.get(url, headers=user_agent) as response:
             response_length = len(response.content)
             print(f"Current URL: {url}")
             if not response_length or not response.ok:
@@ -77,6 +105,7 @@ def download_site(url, q):
             q.put(f"[{response.status_code}] {url}")
         except UnboundLocalError:  # response doesn't exist → connection error
             q.put(url)
+
 
 def check_all_ok(dead_file):
     """Once we have requested all URLs, check if any was found to be
@@ -94,6 +123,7 @@ def check_all_ok(dead_file):
     except FileNotFoundError:
         print(f"<{dead_file}> doesn't exist.")
 
+
 def listener(q):
     """Listens for messages on the `q`, writes to file."""
 
@@ -107,6 +137,7 @@ def listener(q):
 
             f.write(str(m) + "\n")
             f.flush()
+
 
 def job_manager(sites):
     """The purpose of the job manager is to add "jobs" in a "queue" so
@@ -134,8 +165,11 @@ def job_manager(sites):
     q.put("kill")
     pool.close()
 
+
 if __name__ == "__main__":
-    SITES = extract_links(EXCLUDED_WEBSITES)  # Generate list of links
+    SITES = extract_links(
+        EXCLUDED_WEBSITES, EXACT_MATCHES
+    )  # Generate list of links
     START_TIME = time.time()  # Start timer right before launching job manager
 
     # Add links as 'jobs' to write dead links to a file

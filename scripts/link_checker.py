@@ -25,14 +25,17 @@ EXCLUDED_WEBSITES = [
     "http://web.stanford.edu/class/archive/cs/cs103/cs103.1182/notes/Guide%20to%20Negating%20Formulas.pdf",
     "http://www.doc.gold.ac.uk/blog/",
     "http://www.geometer.org/mathcircles/RSA.pdf",
+    "https://achecker.ca",
     "https://cvn.columbia.edu/program/columbia-university-computer-science-masters-degree-masters-science",
     "https://github.com/Xuan-Lim",
     "https://godaddy.com/domains",
+    "https://math.berkeley.edu/~arash/55/8_2.pdf",
     "https://www.bsimm.com/",
     "https://www.coursera.org/learn/london-cs-orientation",
     "https://www.coursera.org/learn/uol-introduction-to-programming-1/",
     "https://www.khanacademy.org/math/precalculus/x9e81a4f98389efdf",
     "https://www.reddit.com/r/UniversityOfLondonCS/",
+    "https://www.tablesgenerator.com/",
     "https://yukaichou.com/gamification-book/",
     "twitter.com",
 ]
@@ -67,9 +70,9 @@ def extract_links(excluded_websites: list, exact_matches: list) -> set:
         # Handle a couple of edge cases...
         if link.count("(") == 0 and link.count(")"):
             link = link.replace(")", "")
-        elif link.endswith("))"):
+        if link.endswith("))"):  # should be handled regardless of first if
             link = link.strip(")")
-        link = link.strip(".").strip(",")
+        link = link.strip(".").strip(",").strip(":")
         excluded = False
         for website in excluded_websites:
             if website in link:

@@ -18,7 +18,7 @@
 - [BSc Computer Science Coursera Webpage](https://www.coursera.org/degrees/bachelor-of-science-computer-science-london/) – _Coursera's webpage for the University of London's BSc Computer Science programme. Contains links to the application portal._
 - [BSc Computer Science Programme Homepage](https://london.ac.uk/courses/computer-science) – _University of London's main programme homepage for the BSc Computer Science. Contains more information than the Coursera webpage._
   - University of London Computer Science Prospectus – _Admissions prospectus about the University of London in general. A polished, informative summary for the prospective student._
-  - Programme Regulations – _The 'Bible' of the BSc Computer Science degree. If you will only read one document, read this one. Contains almost every detail about specific workings and regulations._
+  - [Programme Regulations](https://www.london.ac.uk/current-students/programme-documents/regulations) – _The 'Bible' of the BSc Computer Science degree. If you will only read one document, read this one. Contains almost every detail about specific workings and regulations._
   - Programme Specification – _A broad outline and overview of the structure and content of the degree, entry level qualifications, and learning outcomes._
   - Structure & Module Descriptions – _A high-level summary of the 22 modules and Final Project which makes up the Programme, seperated by Levels._
   - General Entrance Requirements.
